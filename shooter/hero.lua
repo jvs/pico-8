@@ -8,6 +8,8 @@ hero.ideal_y = globals.screen_h - hero.h - 20
 hero.x = hero.ideal_x
 hero.y = hero.ideal_y
 
+hero.main_gun = guns.basic_gun()
+
 hero.fire_palettes = {
   red = {
     ears = 2,
@@ -32,6 +34,10 @@ hero.init = function()
 end
 
 hero.update = function()
+  if (hero.main_gun) then
+    hero.main_gun.update()
+  end
+
   local dx = 0
   local dy = 0
 
@@ -46,7 +52,6 @@ hero.update = function()
   elseif (btn(3) and not btn(2)) then
     dy = 1
   end
-
 
   globals.camera_dx = dx
   globals.camera_dy = dy
@@ -69,6 +74,19 @@ hero.update = function()
   else
     hero.y += dy * 2
     globals.camera_y += dy
+  end
+
+  if (btn(4) and hero.main_gun) then
+    hero.main_gun.fire()
+  end
+
+  if (btn(5)) then
+    -- Just for now:
+    if (hero.fire_palette == hero.fire_palettes.red) then
+      hero.fire_palette = hero.fire_palettes.green
+    else
+      hero.fire_palette = hero.fire_palettes.red
+    end
   end
 end
 
