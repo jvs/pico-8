@@ -1,7 +1,7 @@
 hero = {}
 
 hero.w = 5
-hero.h = 6
+hero.h = 7
 hero.ideal_x = flr((globals.screen_w - hero.w) / 2)
 hero.ideal_y = globals.screen_h - hero.h - 20
 
@@ -98,11 +98,15 @@ end
 hero.draw = function()
   hero.draw_fire_trail(hero.fire_palette)
   spr(1, hero.x, hero.y)
+
+  if (hero.main_gun) then
+    hero.main_gun.draw()
+  end
 end
 
 hero.draw_fire_trail = function(palette)
   local start_x = hero.x
-  local start_y = hero.y + hero.h
+  local start_y = hero.y + hero.h - 1
 
   local function bend()
     if (rnd(1) >= 0.3) then

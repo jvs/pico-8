@@ -4,6 +4,9 @@ guns.basic_gun = function()
   gun.bullet_w = 1
   gun.bullet_h = 5
   gun.cool_down = 0
+  gun.fire_frame = 0
+  gun.is_firing = false
+  gun.current_bullet = nil
 
   gun.bullet_palette = {
     head = 7,
@@ -16,12 +19,20 @@ guns.basic_gun = function()
     if (gun.cool_down < 0) then
       gun.cool_down = 0
     end
+    if (gun.is_firing) then
+      gun.fire_frame += 1
+    end
   end
 
   gun.fire = function()
     if (gun.cool_down == 0) then
       gun.cool_down = 10
-      bullets.add_bullet(gun.make_bullet())
+      gun.is_firing = true
+      gun.fire_frame = 0
+
+      local bullet = gun.make_bullet()
+      gun.current_bullet = bullet
+      bullets.add_bullet(bullet)
     end
   end
 
@@ -55,6 +66,61 @@ guns.basic_gun = function()
     end
 
     return bullet
+  end
+
+  gun.draw = function()
+    if (gun.is_firing) then
+      local center_x = hero.x + flr(hero.w / 2) + 1
+
+      if (gun.fire_frame < 4) then
+        gun.current_bullet.x = center_x
+      end
+
+      if (gun.fire_frame == 0) then
+        rectfill(
+          center_x - 1,
+          hero.y - 2,
+          center_x + 1,
+          hero.y - 1,
+          gun.bullet_palette.head
+        )
+      elseif (gun.fire_frame == 1) then
+        rectfill(
+          center_x - 1,
+          hero.y - 3,
+          center_x + 1,
+          hero.y - 1,
+          gun.bullet_palette.body
+        )
+      elseif (gun.fire_frame == 2) then
+        rectfill(
+          center_x - 3,
+          hero.y - 4,
+          center_x + 3,
+          hero.y - 1,
+          gun.bullet_palette.tail
+        )
+      elseif (gun.fire_frame == 3) then
+        rectfill(
+          center_x - 4,
+          hero.y - 3,
+          center_x + 4,
+          hero.y - 1,
+          gun.bullet_palette.tail
+        )
+      elseif (gun.fire_frame == 4) then
+        rectfill(
+          center_x - 6,
+          hero.y - 1,
+          center_x + 6,
+          hero.y - 1,
+          gun.bullet_palette.tail
+        )
+      else
+        gun.is_firing = false
+        gun.current_bullet = nil
+      end
+    end
   end
 
   return gun
