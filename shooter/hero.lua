@@ -22,6 +22,8 @@ hero.fire_palettes = {
   },
 }
 
+hero.fire_palette = hero.fire_palettes.red
+
 
 hero.init = function()
 end
@@ -52,7 +54,7 @@ hero.update = function()
 end
 
 hero.draw = function()
-  hero.draw_fire_trail(hero.fire_palettes.red)
+  hero.draw_fire_trail(hero.fire_palette)
   spr(1, hero.x, hero.y)
 end
 
