@@ -1,11 +1,8 @@
 space = {}
 
-space.num_stars = 700
-
-space.x = -globals.screen_w
-space.y = -globals.screen_h
-space.w = globals.screen_w * 3
-space.h = globals.screen_h * 3
+space.num_stars = 200
+space.buffer_x = 100
+space.buffer_y = 10
 
 space.palettes = {
   muted = {
@@ -25,7 +22,7 @@ space.stars = {}
 space.init = function()
   for i = 1,space.num_stars do
     star = space._create_star()
-    star.y = space.y + rnd(space.h)
+    star.y += rnd(globals.screen_h + space.buffer_y)
     space.stars[i] = star
   end
 end
@@ -40,9 +37,22 @@ space.update = function()
       star.y += star.speed
     end
 
-    if (star.y - space.y > space.h) then
+    local adj_x = star.x - globals.camera_x
+    local limit_x = globals.screen_w + space.buffer_x
+    local adj_y = star.y - globals.camera_y
+    local off_x = adj_x < -space.buffer_x or adj_x > limit_x
+    local off_y = adj_y > globals.screen_h
+
+    if (off_x or off_y) then
       space.stars[i] = space._create_star()
     end
+  end
+end
+
+space.adjust = function()
+  for _, star in ipairs(space.stars) do
+    star.x += globals.travel_x
+    star.y += globals.travel_y
   end
 end
 
@@ -67,10 +77,12 @@ space._create_star = function()
     color = colors.slow
   end
 
+  local total_w = globals.screen_w + space.buffer_x * 2
+
   return {
-    x=rnd(space.w) + space.x,
-    y=space.y,
-    speed=speed,
-    color=color,
+    x = rnd(total_w) - space.buffer_x + globals.camera_x,
+    y = -space.buffer_y + globals.camera_y,
+    speed = speed,
+    color = color,
   }
 end

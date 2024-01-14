@@ -2,8 +2,11 @@ hero = {}
 
 hero.w = 5
 hero.h = 6
-hero.x = flr((globals.screen_w - hero.w) / 2)
-hero.y = globals.screen_h - hero.h - 10
+hero.ideal_x = flr((globals.screen_w - hero.w) / 2)
+hero.ideal_y = globals.screen_h - hero.h - 20
+
+hero.x = hero.ideal_x
+hero.y = hero.ideal_y
 
 hero.fire_palettes = {
   red = {
@@ -44,13 +47,34 @@ hero.update = function()
     dy = 1
   end
 
-  hero.x += dx * 2
-  hero.y += dy * 2
 
-  globals.camera_x += dx
-  globals.camera_y += dy
   globals.camera_dx = dx
   globals.camera_dy = dy
+
+  if (dx == 0) then
+    local ideal_x = hero.ideal_x + globals.camera_x
+    if (hero.x ~= ideal_x) then
+      globals.camera_x += (hero.x > ideal_x) and 0.5 or -0.5
+    end
+  else
+    hero.x += dx * 2
+    globals.camera_x += dx
+  end
+
+  if (dy == 0) then
+    local ideal_y = hero.ideal_y + globals.camera_y
+    if (hero.y ~= ideal_y) then
+      globals.camera_y += (hero.y > ideal_y) and 0.5 or -0.5
+    end
+  else
+    hero.y += dy * 2
+    globals.camera_y += dy
+  end
+end
+
+hero.adjust = function()
+  hero.x += globals.travel_x
+  hero.y += globals.travel_y
 end
 
 hero.draw = function()
