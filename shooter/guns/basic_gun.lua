@@ -16,9 +16,16 @@ guns.basic_gun = function()
 
   gun.update = function()
     gun.cool_down -= 1
+
+    -- If we're backing up, cool down faster.
+    if (gun.cool_down < 4 and globals.camera_dy > 0) then
+      gun.cool_down = 0
+    end
+
     if (gun.cool_down < 0) then
       gun.cool_down = 0
     end
+
     if (gun.is_firing) then
       gun.fire_frame += 1
     end
